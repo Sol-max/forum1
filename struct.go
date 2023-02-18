@@ -4,7 +4,7 @@ import "time"
 
 // User represents a registered user of the forum
 type User struct {
-	ID        int64
+	ID        int
 	Username  string
 	Email     string
 	Password  string
@@ -13,7 +13,7 @@ type User struct {
 
 // Post represents a forum post
 type Post struct {
-	ID         int64
+	ID         int
 	Title      string
 	Body       string
 	UserID     int64

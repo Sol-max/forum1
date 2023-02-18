@@ -40,7 +40,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Create a new session for the user
-		uuid, err := createSession(userID)
+		uuid, err := createSession(int(userID))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
