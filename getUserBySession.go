@@ -1,4 +1,4 @@
-package forum
+package main
 
 func getUserBySession(sessionID string) (int, error) {
 	var userID int

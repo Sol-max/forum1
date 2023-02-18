@@ -1,4 +1,4 @@
-package forum
+package main
 
 import "github.com/gofrs/uuid"
 

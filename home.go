@@ -1,4 +1,4 @@
-package forum
+package main
 
 import (
 	"net/http"
@@ -69,6 +69,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
 func registerHandler(w http.ResponseWriter, r *http.Request) {
 	// Check if the user is already logged in
 	_, err := checkSession(r)
@@ -93,7 +94,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 			Password:       r.PostFormValue("password"),
 			PasswordRepeat: r.PostFormValue("password_repeat"),
 		}
-		errs := validateRegistrationData(data)
+		/*errs := validateRegistrationData(data)
 		if len(errs) > 0 {
 			// If the form data is invalid, render the registration page with error messages
 			err := templates.ExecuteTemplate(w, "register.html", map[string]interface{}{
@@ -105,7 +106,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			return
-		}
+		}*/
 
 		// Hash the user's password
 		hash, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
