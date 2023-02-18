@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"time"
+	_ "github.com/mattn/go-sqlite3"
 
 	//"github.com/gofrs/uuid"
 	//"github.com/mattn/go-sqlite3"
