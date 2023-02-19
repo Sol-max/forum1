@@ -2,7 +2,6 @@ package main
 
 import "fmt"
 
-// getUserByUsername retrieves a user record from the database by their username.
 func getUserByUsername(username string) (*User, error) {
 	row := db.QueryRow("SELECT id, username, email, password, created_at FROM users WHERE username = ?", username)
 

@@ -6,8 +6,7 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-// Check if the request has a valid session cookie and return the username associated with the session
-func checkSession(r *http.Request) (string, error) {
+func checkSession(r *http.Request) (string, error) {// Check if the request has a valid session cookie and return the username
 	cookie, err := r.Cookie("session")
 	if err != nil {
 		if err == http.ErrNoCookie {
@@ -16,8 +15,7 @@ func checkSession(r *http.Request) (string, error) {
 		return "", err
 	}
 
-	// Verify that the session ID is valid and get the corresponding username from the database
-	sessionID, err := uuid.FromString(cookie.Value)
+	sessionID, err := uuid.FromString(cookie.Value)	// Verify that the session ID is valid
 	if err != nil {
 		return "", err
 	}

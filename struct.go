@@ -2,7 +2,6 @@ package main
 
 import "time"
 
-// User represents a registered user of the forum
 type User struct {
 	ID        int
 	Username  string
@@ -11,7 +10,6 @@ type User struct {
 	CreatedAt time.Time
 }
 
-// Post represents a forum post
 type Post struct {
 	ID         int
 	Title      string
@@ -21,7 +19,6 @@ type Post struct {
 	ModifiedAt time.Time
 }
 
-// Comment represents a comment on a forum post
 type Comment struct {
 	ID        int64
 	Body      string
@@ -30,7 +27,6 @@ type Comment struct {
 	CreatedAt time.Time
 }
 
-// Vote represents a vote on a forum post or comment
 type Vote struct {
 	ID        int64
 	UserID    int64

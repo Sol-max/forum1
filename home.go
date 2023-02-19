@@ -8,38 +8,33 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-	// Check if the user is logged in
+func homeHandler(w http.ResponseWriter, r *http.Request) { // Check if the user is logged in
 	username, err := checkSession(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// If the user is logged in, render the home page
-	if username != "" {
+	if username != "" { // If the user is logged in, return to the home page
 		data := &sessionData{Username: username}
-		err := templates.ExecuteTemplate(w, "home.html", data)
+		err := templates.ExecuteTemplate(w, "/index.html", data)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {
-		// Otherwise, redirect the user to the login page
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		http.Redirect(w, r, "/login", http.StatusSeeOther) // Return the user to the login page
 	}
 }
 
-func loginHandler(w http.ResponseWriter, r *http.Request) {
-	// Check if the user is already logged in
+func loginHandler(w http.ResponseWriter, r *http.Request) { // Check if the user is already logged in
 	_, err := checkSession(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// If the request method is POST, attempt to authenticate the user
-	if r.Method == "POST" {
+	if r.Method == "POST" { // If the request method is POST, attempt to authenticate the user
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 		user, err := authenticateUser(username, password)
@@ -48,21 +43,18 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Create a new session for the user
-		uuid, err := createSession(user.ID)
+		uuid, err := createSession(user.ID) // Create a new session for the user
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		// Set a cookie with the session UUID and redirect the user to the home page
-		expiration := time.Now().Add(time.Hour)
+		expiration := time.Now().Add(time.Hour) // Set a cookie with the session UUID and return the user to the home page
 		cookie := &http.Cookie{Name: "session", Value: uuid.String(), Expires: expiration}
 		http.SetCookie(w, cookie)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
-		// Otherwise, render the login page
-		err := templates.ExecuteTemplate(w, "login.html", nil)
+		err := templates.ExecuteTemplate(w, "login.html", nil) // Return to the login page
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -70,17 +62,14 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func registerHandler(w http.ResponseWriter, r *http.Request) {
-	// Check if the user is already logged in
+func registerHandler(w http.ResponseWriter, r *http.Request) { // Check if the user is already logged in
 	_, err := checkSession(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// If the request method is POST, attempt to register the user
-	if r.Method == "POST" {
-		// Parse the registration form data
+	if r.Method == "POST" { // If the request method is POST, attempt to register the user
 		err := r.ParseForm()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -94,57 +83,39 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 			Password:       r.PostFormValue("password"),
 			PasswordRepeat: r.PostFormValue("password_repeat"),
 		}
-		/*errs := validateRegistrationData(data)
-		if len(errs) > 0 {
-			// If the form data is invalid, render the registration page with error messages
-			err := templates.ExecuteTemplate(w, "register.html", map[string]interface{}{
-				"Data":  data,
-				"Errors": errs,
-			})
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			return
-		}*/
 
-		// Hash the user's password
-		hash, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
+		hash, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost) // Save the password
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		// Insert the user into the database
-		now := time.Now().UTC().Format(time.RFC3339)
+		now := time.Now().UTC().Format(time.RFC3339) // Insert the user into the database
 		result, err := db.Exec("INSERT INTO users (username, email, password, created_at) VALUES (?, ?, ?, ?)", data.Username, data.Email, hash, now)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		// Get the ID of the new user
-		userID, err := result.LastInsertId()
+		userID, err := result.LastInsertId() // Get the ID of the new user
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		// Create a new session for the user
-		sessionUUID, err := createSession(int(userID))
+		sessionUUID, err := createSession(int(userID)) // Create a new session for the user
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		// Set a cookie with the session UUID and redirect the user to the home page
-		expiration := time.Now().Add(time.Hour)
+		expiration := time.Now().Add(time.Hour) // Set a cookie with the session UUID and redirect the user to the home page
 		cookie := &http.Cookie{Name: "session", Value: sessionUUID.String(), Expires: expiration}
 		http.SetCookie(w, cookie)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
-		// Otherwise, render the registration page
-		err := templates.ExecuteTemplate(w, "register.html", nil)
+
+		err := templates.ExecuteTemplate(w, "register.html", nil) // Return to the registration page
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
